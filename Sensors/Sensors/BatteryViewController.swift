@@ -24,13 +24,10 @@ class BatteryViewController: UIViewController {
                                                name: NSNotification.Name.UIDeviceBatteryStateDidChange, object: nil)
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+    override func viewDidDisappear(_ animated: Bool) {
+        UIDevice.current.isBatteryMonitoringEnabled = false
     }
-    
     func updateBatterLevel() {
-    
         level.text = "\(UIDevice.current.batteryLevel)"
     }
     
@@ -40,15 +37,19 @@ class BatteryViewController: UIViewController {
             
         case .full:
             state.text = "Full"
+            state.backgroundColor = .green
             
         case .charging:
             state.text = "Charging"
+            state.backgroundColor = .orange
             
         case .unplugged:
             state.text = "Unplugged"
+            state.backgroundColor = .blue
             
         case .unknown:
             state.text = "Unknown"
+            state.backgroundColor = .red
         }
     }
 }
