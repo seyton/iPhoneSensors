@@ -13,6 +13,11 @@ class SpeedViewController: UIViewController {
 
     @IBOutlet weak var metersPerSecond: UILabel!
     @IBOutlet weak var kilometersPerSecond: UILabel!
+    @IBOutlet weak var heading: UILabel!
+    @IBOutlet weak var altitude: UILabel!
+    
+    @IBOutlet weak var longitude: UILabel!
+    @IBOutlet weak var latitude: UILabel!
     
     fileprivate var locationManager: CLLocationManager!
     
@@ -23,6 +28,10 @@ class SpeedViewController: UIViewController {
             locationManager = CLLocationManager()
             locationManager.delegate = self
             locationManager.startUpdatingLocation()
+            
+            locationManager.headingFilter = kCLHeadingFilterNone
+            locationManager.headingOrientation = .portrait
+            locationManager.startUpdatingHeading()
         }
     }
 
@@ -31,6 +40,7 @@ class SpeedViewController: UIViewController {
         
         if CLLocationManager.locationServicesEnabled() {
             locationManager.stopUpdatingLocation()
+            locationManager.stopUpdatingHeading()
         }
     }
 }
@@ -54,10 +64,19 @@ extension SpeedViewController: CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+     
+        print("--First Location \(locations.first)")
         
         if let newestLocation = locations.last {
             metersPerSecond.text = String().appendingFormat("%.2f", (newestLocation.speed))
             kilometersPerSecond.text = String().appendingFormat("%.2f", (newestLocation.speed) * 3.6)
+            altitude.text = String().appendingFormat("%.2f m", (newestLocation.altitude))
+            longitude.text = String().appendingFormat("%.4f", (newestLocation.coordinate.longitude))
+            latitude.text = String().appendingFormat("%.4f", (newestLocation.coordinate.latitude))
         }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        heading.text = String().appendingFormat("%.2f", newHeading.magneticHeading)
     }
 }
